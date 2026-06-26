@@ -26,15 +26,26 @@ router.get('/login', (req, res) => {
 });
 
 router.get('/callback', async (req, res) => {
-  const { code, state } = req.query;
+  console.log('[AUTH CALLBACK] Called with query params:', req.query);
+  const { code, state, error: spotifyError } = req.query;
+
+  if (spotifyError) {
+    console.error('[AUTH CALLBACK] Spotify error:', spotifyError);
+    return res.status(400).json({ error: `Spotify error: ${spotifyError}` });
+  }
 
   if (!code) {
+    console.error('[AUTH CALLBACK] No authorization code received');
     return res.status(400).json({ error: 'No authorization code received' });
   }
 
   try {
+    console.log('[AUTH CALLBACK] Exchanging code for token...');
     const tokenData = await exchangeCodeForToken(code);
+    console.log('[AUTH CALLBACK] Got token, fetching user info...');
+    
     const user = await getCurrentUser(tokenData.access_token);
+    console.log('[AUTH CALLBACK] Got user:', user.id);
 
     // Store token in database
     const db = getDatabase();
@@ -56,6 +67,8 @@ router.get('/callback', async (req, res) => {
       tokenData.refresh_token || null,
       expiresAt.toISOString()
     );
+    
+    console.log('[AUTH CALLBACK] Token stored in database');
 
     // Set session
     req.session.userId = user.id;
@@ -63,10 +76,14 @@ router.get('/callback', async (req, res) => {
 
     // Redirect to frontend with user info
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    res.redirect(`${frontendUrl}/setup?userId=${user.id}&token=${tokenData.access_token}`);
+    const redirectUrl = `${frontendUrl}/setup?userId=${user.id}&token=${tokenData.access_token}`;
+    console.log('[AUTH CALLBACK] Redirecting to:', redirectUrl);
+    
+    res.redirect(redirectUrl);
   } catch (error) {
-    console.error('Auth callback error:', error);
-    res.status(500).json({ error: 'Authentication failed' });
+    console.error('[AUTH CALLBACK] Error:', error);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}?error=${encodeURIComponent(error.message)}`);
   }
 });
 
