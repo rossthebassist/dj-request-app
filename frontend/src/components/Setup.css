@@ -1,0 +1,181 @@
+.setup-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.setup-card {
+  background: var(--surface);
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.setup-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.setup-header h1 {
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.setup-header p {
+  color: #999;
+  font-size: 14px;
+}
+
+.setup-step h2 {
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+/* Playlist Selection */
+.playlist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--background);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.playlist-item:hover {
+  border-color: var(--primary);
+}
+
+.playlist-item.selected {
+  border-color: var(--primary);
+  background: rgba(255, 107, 53, 0.1);
+}
+
+.playlist-item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.playlist-info {
+  flex: 1;
+}
+
+.playlist-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.playlist-meta {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Create Playlist Form */
+.create-playlist-form {
+  margin-bottom: 20px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.form-actions .btn {
+  flex: 1;
+}
+
+/* Form Styling */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.color-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-input {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.color-input-wrapper span {
+  font-size: 12px;
+  color: #999;
+  font-family: monospace;
+}
+
+/* Actions */
+.setup-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.setup-actions .btn {
+  flex: 1;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.error-text {
+  color: #ff6b6b;
+  font-size: 14px;
+  margin: 12px 0;
+}
+
+@media (max-width: 768px) {
+  .setup-card {
+    padding: 20px;
+  }
+
+  .setup-header h1 {
+    font-size: 22px;
+  }
+
+  .color-grid {
+    grid-template-columns: 1fr;
+  }
+}
