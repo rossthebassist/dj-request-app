@@ -5,8 +5,24 @@ import { getDatabase } from '../db.js';
 const router = express.Router();
 
 router.get('/login', (req, res) => {
-  const authUrl = getSpotifyAuthUrl();
-  res.json({ authUrl });
+  try {
+    console.log('[AUTH] Login endpoint called');
+    console.log('[AUTH] SPOTIFY_CLIENT_ID:', process.env.SPOTIFY_CLIENT_ID ? 'SET' : 'NOT SET');
+    console.log('[AUTH] SPOTIFY_REDIRECT_URI:', process.env.SPOTIFY_REDIRECT_URI);
+    
+    const authUrl = getSpotifyAuthUrl();
+    console.log('[AUTH] Generated auth URL:', authUrl.substring(0, 50) + '...');
+    
+    res.json({ authUrl });
+  } catch (error) {
+    console.error('[AUTH] Login error:', error.message);
+    res.status(500).json({ 
+      error: 'Failed to generate auth URL',
+      details: error.message,
+      hasClientId: !!process.env.SPOTIFY_CLIENT_ID,
+      hasRedirectUri: !!process.env.SPOTIFY_REDIRECT_URI
+    });
+  }
 });
 
 router.get('/callback', async (req, res) => {
