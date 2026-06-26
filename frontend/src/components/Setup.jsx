@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { API_CONFIG, apiCall } from '../config/api';
 import './Setup.css';
 
 function Setup({ user, onEventCreated }) {
@@ -32,9 +33,7 @@ function Setup({ user, onEventCreated }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/playlists');
-      if (!response.ok) throw new Error('Failed to fetch playlists');
-      const data = await response.json();
+      const data = await apiCall(API_CONFIG.endpoints.playlists.list);
       setPlaylists(data);
     } catch (err) {
       setError(err.message);
@@ -52,13 +51,10 @@ function Setup({ user, onEventCreated }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/playlists', {
+      const playlist = await apiCall(API_CONFIG.endpoints.playlists.create, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newPlaylistName })
       });
-      if (!response.ok) throw new Error('Failed to create playlist');
-      const playlist = await response.json();
       setPlaylists([playlist, ...playlists]);
       setSelectedPlaylist(playlist);
       setNewPlaylistName('');
@@ -83,15 +79,13 @@ function Setup({ user, onEventCreated }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/events', {
+      await apiCall(API_CONFIG.endpoints.events.create, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...eventConfig,
           playlistId: selectedPlaylist.id
         })
       });
-      if (!response.ok) throw new Error('Failed to create event');
       onEventCreated();
     } catch (err) {
       setError(err.message);

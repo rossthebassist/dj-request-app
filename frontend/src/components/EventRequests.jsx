@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Search, Volume2, ThumbsUp } from 'lucide-react';
 import { useEventConfig } from '../hooks/useEventConfig';
+import { API_CONFIG, apiCall } from '../config/api';
 import './EventRequests.css';
 
 function EventRequests({ eventId, onBack }) {
@@ -35,9 +36,7 @@ function EventRequests({ eventId, onBack }) {
 
   const fetchRequests = async () => {
     try {
-      const response = await fetch(`/api/requests/event/${eventId}/top?limit=10`);
-      if (!response.ok) throw new Error('Failed to fetch requests');
-      const data = await response.json();
+      const data = await apiCall(API_CONFIG.endpoints.requests.getTop(eventId) + '?limit=10');
       setRequests(data);
       setRequestsError(null);
     } catch (err) {
@@ -58,9 +57,7 @@ function EventRequests({ eventId, onBack }) {
     setSearchLoading(true);
     setSearchError(null);
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-      if (!response.ok) throw new Error('Search failed');
-      const data = await response.json();
+      const data = await apiCall(`${API_CONFIG.endpoints.search}?q=${encodeURIComponent(query)}`);
       setSearchResults(data);
     } catch (err) {
       setSearchError(err.message);
@@ -72,9 +69,8 @@ function EventRequests({ eventId, onBack }) {
   // Submit request
   const handleRequestSong = async (track) => {
     try {
-      const response = await fetch('/api/requests', {
+      await apiCall(API_CONFIG.endpoints.requests.create, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           eventId,
           spotifyTrackId: track.id,
@@ -84,7 +80,6 @@ function EventRequests({ eventId, onBack }) {
           albumImage: track.image
         })
       });
-      if (!response.ok) throw new Error('Failed to request song');
       
       await fetchRequests();
       setSearchQuery('');
@@ -99,10 +94,9 @@ function EventRequests({ eventId, onBack }) {
     if (votedRequests.has(requestId)) return;
 
     try {
-      const response = await fetch(`/api/requests/${requestId}/vote`, {
+      await apiCall(API_CONFIG.endpoints.requests.vote(requestId), {
         method: 'PUT'
       });
-      if (!response.ok) throw new Error('Vote failed');
       
       setVotedRequests(new Set([...votedRequests, requestId]));
       await fetchRequests();

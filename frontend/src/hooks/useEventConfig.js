@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_CONFIG, apiCall } from '../config/api';
 
 export function useEventConfig(eventId) {
   const [config, setConfig] = useState(null);
@@ -8,9 +9,7 @@ export function useEventConfig(eventId) {
   useEffect(() => {
     async function fetchEvent() {
       try {
-        const response = await fetch(`/api/events/${eventId}`);
-        if (!response.ok) throw new Error('Event not found');
-        const data = await response.json();
+        const data = await apiCall(API_CONFIG.endpoints.events.get(eventId));
         setConfig(data);
       } catch (err) {
         setError(err.message);

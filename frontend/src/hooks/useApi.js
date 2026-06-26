@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { API_CONFIG, apiCall } from '../config/api';
 
-export function useApi(url, options = {}) {
+export function useApi(endpoint, options = {}) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -11,21 +12,14 @@ export function useApi(url, options = {}) {
     try {
       const config = {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        ...options,
+        ...options
       };
 
       if (body) {
         config.body = JSON.stringify(body);
       }
 
-      const response = await fetch(url, config);
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const result = await response.json();
+      const result = await apiCall(endpoint, config);
       setData(result);
       return result;
     } catch (err) {

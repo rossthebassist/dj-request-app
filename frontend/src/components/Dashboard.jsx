@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Plus } from 'lucide-react';
+import { API_CONFIG, apiCall } from '../config/api';
 import './Dashboard.css';
 
 function Dashboard({ user, onSelectEvent }) {
@@ -15,9 +16,7 @@ function Dashboard({ user, onSelectEvent }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/events');
-      if (!response.ok) throw new Error('Failed to fetch events');
-      const data = await response.json();
+      const data = await apiCall(API_CONFIG.endpoints.events.list);
       setEvents(data);
     } catch (err) {
       setError(err.message);
